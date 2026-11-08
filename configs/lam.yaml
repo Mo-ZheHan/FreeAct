@@ -1,0 +1,67 @@
+# FreeAct stage 1: physically grounded latent action model.
+# Launch with:  bash scripts/train_lam.sh   (8 GPUs)
+seed_everything: 42
+
+model:
+  lam_model_dim: 768
+  lam_latent_dim: 128
+  lam_num_latents: 64        # codebook size |C|
+  lam_num_codes: 4           # tokens per frame pair K
+  lam_enc_blocks: 12
+  lam_dec_blocks: 12
+  lam_num_heads: 12
+  vq_beta: 0.25
+  action_loss_weight: 0.01   # lambda_act
+  # Per-component std of camera-frame actions over the calibrated mixture (delta_time = 1.0 s),
+  # see scripts/compute_action_stats.py
+  action_std_pos: 0.05953404409539661
+  action_std_rot: 0.1558521826120548
+  action_std_grip: 0.2743578311625751
+  optimizer:
+    class_path: torch.optim.AdamW
+    init_args:
+      lr: 1e-4
+      weight_decay: 1e-2
+
+data:
+  root: ./data            # contains droid/ and libero/; see README.md
+  # (repo_id, sampling weight, has camera calibration -> supervises the Action Decoder)
+  dataset_mix:
+    - ["droid/dual_cam", 1.0, true]
+    - ["droid/single_cam", 1.0, true]
+    - ["droid/dual", 1.0, false]
+    - ["droid/single", 1.0, false]
+    - ["libero/libero_spatial", 1.0, true]
+    - ["libero/libero_object", 1.0, true]
+    - ["libero/libero_goal", 1.0, true]
+    - ["libero/libero_10", 1.0, true]
+    - ["libero/libero_90", 1.0, true]
+  batch_size: 64          # per GPU; x 8 GPUs = 512
+  resolution: 224
+  image_aug: true
+  num_workers: 16
+  seed: 42
+  val_split: 0.002        # held-out episodes, also used as the RQ1 test split
+  delta_time: 1.0         # seconds between the two frames of a pair
+  shuffle: true
+
+trainer:
+  max_epochs: 1
+  accelerator: gpu
+  num_nodes: 1
+  devices: 8
+  strategy: ddp_find_unused_parameters_false
+  precision: 16-mixed
+  accumulate_grad_batches: 1
+  log_every_n_steps: 10
+  gradient_clip_val: 0.1
+  val_check_interval: 0.1
+  use_distributed_sampler: false
+  default_root_dir: ./outputs/lam
+  callbacks:
+    - class_path: lightning.pytorch.callbacks.ModelCheckpoint
+      init_args:
+        save_last: true
+        save_top_k: -1
+        monitor: val/loss
+        save_on_train_epoch_end: false

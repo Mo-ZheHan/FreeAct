@@ -1,0 +1,56 @@
+You will watch a rollout video of a robot completing the <task objective> and score it based on the quality of the task execution process.
+Please inspect the video frame by frame. Do not score based only on key frames, sampled frames, or an overall impression. Before scoring, you must clearly observe the continuous process from the robot approaching the target object, making contact, performing the operation, and reaching the end of the task. Pay close attention to the approach path, pauses, jitter, incorrect contact, corrective actions, environmental collisions, operation effect, and final state.
+Please score the performance across the following five dimensions. Each dimension is scored from 0 to 4, for a total of 20 points. Each score must be an integer and include a brief reason.
+
+(1) Approach and Initial Operation Smoothness
+Evaluate whether the robot's process from approaching the target object to forming effective contact is natural, continuous, and accurate.
+4 points: The robot approaches accurately in one attempt and forms effective contact. The path is natural and continuous, with no obvious jitter, pauses, probing, incorrect contact, or secondary adjustment.
+3 points: Overall fairly smooth, with only slight deceleration, small pose correction, or very brief alignment. No obvious pause, hesitation, jitter, poking, pushing, retreating, or post-contact readjustment.
+2 points: Average process, with visible pauses, hesitation, jitter, path deviation, obvious pose correction, brief incorrect stopping, slight poking, pushing, or post-contact adjustment. Effective contact is eventually formed.
+1 point: Effective contact is formed only after multiple pokes, pushes, probing actions, retreats, or repeated adjustments.
+0 points: The robot is unable to form effective contact for a long time, repeatedly collides with or pushes away the target object, or makes incorrect contact; the initial stage is chaotic.
+
+(2) Contact Position Accuracy and Operation Quality
+Evaluate whether the robot's contact position, pose, contact method, force direction, and stability are reasonable.
+4 points: The contact position is ideal, the pose and force application are reasonable, contact is stable and sufficient, and the target object shows no obvious sliding, rotation, tilting, or instability.
+3 points: The contact position is generally accurate, with only slight offset or slightly insufficient contact. The target object remains basically stable, with no obvious sliding, rotation, tilting, slipping, or instability risk.
+2 points: The contact position is not ideal, with obvious offset, insufficient contact area, poor force direction, or uneven force, causing visible tilting, sliding, rotation, slight slipping, or instability of the target object. The task can still continue.
+1 point: The contact position is poor, contacting only an edge, a small area, or the wrong area. The target object is clearly unstable, nearly drops, gets stuck, or fails.
+0 points: The contact position is extremely poor, causing clear operation failure, severe instability, or requiring recovery from a failed state.
+
+(3) Execution Stability and Trajectory Smoothness
+Evaluate whether the main execution phase is stable, smooth, and continuous. Do not separately evaluate environmental collisions here.
+4 points: The execution process is continuous and natural, with steady speed and no obvious jitter, sudden stops, retreats, detours, or unnecessary adjustments. The target object and end effector remain stable.
+3 points: Overall stable, with only slight speed changes, small trajectory adjustments, very brief pauses, or slight shaking. No obvious pose changes, instability, or unnecessary corrections.
+2 points: The process is not very smooth, with obvious pauses, jitter, uneven speed, path corrections, pose adjustments, repeated micro-adjustments, brief retreats, or unnecessary detours. The target object or end effector visibly shakes, tilts, or becomes unstable, but the task can still continue.
+1 point: Multiple jitters, sudden stops, retreats, or repeated adjustments occur. The trajectory is clearly unnatural, and the target object or end effector is obviously unstable.
+0 points: The execution process is chaotic, with long stagnation, severe jitter, or multiple ineffective movements. The task state is severely unstable or close to losing control.
+
+(4) Environmental Interaction and Collision Control
+Evaluate whether the robot, end effector, or target object makes unnecessary contact with the environment and causes disturbances.
+4 points: No obvious collision or unnecessary contact throughout the process; no non-target objects or environmental structures are disturbed.
+3 points: Only slight, brief scraping or near-contact occurs, without visible movement, shaking, squeezing, dragging, mistaken contact, or task interference.
+2 points: Obvious but not severe collision, scraping, pressing, dragging, or mistaken contact occurs, causing small movement, shaking, pose change, brief obstruction, or slight interference, but does not lead to failure.
+1 point: The robot collides with environmental objects multiple times, or clearly pushes, squeezes, drags, or mistakenly contacts objects, causing noticeable disturbance or affecting the task.
+0 points: Severe collision or major environmental disturbance occurs, causing objects to be knocked away, dragged, toppled, mistakenly triggered, or seriously interfering with the task.
+
+(5) Task Success and Final State Accuracy
+Evaluate whether the task is completed and whether the final result reaches the target position or target state.
+4 points: The task succeeds. The final result is accurately in place and stable, with no obvious deviation, over-operation, or risk of failure.
+3 points: The task succeeds. The final result is basically in place, with only slight position or pose deviation. The target object is stable, with no obvious edge offset, tilting, slipping, or subsequent instability risk.
+2 points: The task is basically successful, but the final position, pose, or state is clearly not ideal, such as obvious deviation from the target center, edge offset, tilting, incomplete placement, or risk of slipping, toppling, deviation, rebound, or later instability.
+1 point: The task barely succeeds or is close to succeeding. The final state is unstable, clearly deviates from the target, or only part of the objective is completed.
+0 points: The task fails. The target position or state is not reached, or dropping, non-triggering, severe deviation, jamming, instability, or another issue prevents task completion.
+
+Please output in the following format:
+(1) Approach and Initial Operation Smoothness: X/4
+Reason: ...
+(2) Contact Position Accuracy and Operation Quality: X/4
+Reason: ...
+(3) Execution Stability and Trajectory Smoothness: X/4
+Reason: ...
+(4) Environmental Interaction and Collision Control: X/4
+Reason: ...
+(5) Task Success and Final State Accuracy: X/4
+Reason: ...
+Total Score: X/20

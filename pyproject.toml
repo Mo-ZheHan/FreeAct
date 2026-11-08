@@ -1,0 +1,84 @@
+[project]
+name = "freeact"
+version = "1.0.0"
+description = "FreeAct: Demonstration-Free Robot Adaptation via Action-Grounded Generated Videos"
+readme = "README.md"
+license = "Apache-2.0"
+license-files = ["LICENSE", "THIRD_PARTY_NOTICES.md", "freeact/tokenizers/laq/LICENSE"]
+authors = [
+    { name = "Zhe-Han Mo" },
+    { name = "Jia-Ning Li" },
+    { name = "Jiaxi Song" },
+    { name = "Meng-Hao Guo" },
+    { name = "Shi-Min Hu" },
+]
+requires-python = "~=3.11.0"
+dependencies = [
+    "torch==2.7.1",
+    "torchvision==0.22.1",
+    "torchcodec==0.5",
+    "transformers==4.57.6",
+    "accelerate==1.13.0",
+    "deepspeed==0.18.9",
+    "peft==0.18.1",
+    "lightning==2.6.1",
+    "jsonargparse[signatures]>=4.40",
+    "timm==1.0.26",
+    "einops",
+    "rotary-embedding-torch",
+    "beartype",                 # LAPA tokenizer baseline
+    "lerobot[libero]==0.4.4",   # datasets + LIBERO env wrapper (pulls hf-libero, robosuite 1.4)
+    "mujoco==3.3.2",
+    "ray[default]==2.54.1",
+    "h5py",
+    "numpy",
+    "scipy",
+    "scikit-learn",
+    "umap-learn",
+    "matplotlib",
+    "pillow",
+    "pyyaml",
+    "tqdm",
+    "wandb",
+]
+
+
+[project.urls]
+Homepage = "https://freeact.pages.dev/"
+Paper = "https://freeact.pages.dev/FreeAct.pdf"
+Repository = "https://github.com/Mo-ZheHan/FreeAct"
+Models = "https://huggingface.co/Mo-ZheHan/FreeAct"
+Data = "https://huggingface.co/datasets/Mo-ZheHan/FreeAct-Data"
+
+[project.optional-dependencies]
+# Stages 2-3 and self-evolution training (sequence packing with FlashAttention); not needed for evaluation
+train = ["flash-attn==2.8.3"]
+# MLLM rollout scoring for self-evolution (RQ3)
+judge = ["openai>=1.40"]
+
+[build-system]
+requires = ["setuptools>=77"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+include = ["freeact*"]
+
+[tool.setuptools.package-data]
+"freeact.envs" = ["assets/**/*"]
+"freeact.tokenizers.laq" = ["LICENSE"]
+"freeact.selfevolve" = ["judge_prompt.txt"]
+
+[tool.uv]
+# egl-probe needs cmake to build and is only an optional dependency of robomimic
+exclude-dependencies = ["egl-probe", "hf-egl-probe"]
+
+[[tool.uv.index]]
+name = "pytorch-cu128"
+url = "https://download.pytorch.org/whl/cu128"
+explicit = true
+
+[tool.uv.sources]
+torch = { index = "pytorch-cu128" }
+# Prebuilt wheel for torch 2.7 / CUDA 12 / Python 3.11, so no CUDA toolkit is needed to install
+flash-attn = { url = "https://github.com/Dao-AILab/flash-attention/releases/download/v2.8.3/flash_attn-2.8.3+cu12torch2.7cxx11abiTRUE-cp311-cp311-linux_x86_64.whl" }
+torchvision = { index = "pytorch-cu128" }

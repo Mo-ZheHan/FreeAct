@@ -1,0 +1,21 @@
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+build/
+dist/
+
+# data, checkpoints and run outputs
+/data/
+/checkpoints/
+/outputs/
+wandb/
+lightning_logs/
+*.ckpt
+*.pt
+*.safetensors
+!freeact/envs/assets/**
+
+.DS_Store
+.idea/
+.vscode/
